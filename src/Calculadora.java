@@ -57,54 +57,85 @@ public class Calculadora extends JFrame {
         add(panelBotones, BorderLayout.CENTER);
     }
 
-    private class BotonClickListener implements ActionListener{
-        public void actionPerformed(ActionEvent e){
+    private void handleNumber(String buttonText) {
+        if (inicio) {
+            display.setText(buttonText);
+            inicio = false;
+        } else {
+            display.setText(display.getText() + buttonText);
+        }
+    }
+
+    private void handleDecimal(String buttonText) {
+        if (!display.getText().contains(".")) {
+            display.setText(display.getText() + buttonText);
+        }
+    }
+
+    private void handleOperator(String buttonText) {
+        valor1 = Double.parseDouble(display.getText());
+        operador = buttonText;
+        inicio = true;
+    }
+
+    private void handleEquals() {
+        double valor2 = Double.parseDouble(display.getText());
+        switch (operador) {
+            case "+":
+                valor1 += valor2;
+                break;
+            case "-":
+                valor1 -= valor2;
+                break;
+            case "*":
+                valor1 *= valor2;
+                break;
+            case "/":
+                if (valor2 != 0) {
+                    valor1 /= valor2;
+                } else {
+                    JOptionPane.showMessageDialog(null, "El número es infinito, no lo podemos calcular. Piensa");
+                }
+                break;
+        }
+        display.setText(String.valueOf(valor1));
+        inicio = true;
+    }
+
+    private class BotonClickListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();
-            String textoBoton  = source.getText();
+            String textoBoton = source.getText();
 
-            if(textoBoton.matches("[0-9]")){
-                if(inicio){
-                    display.setText(textoBoton);
-                    inicio = false;
-                }else{
-                    display.setText(display.getText() + textoBoton);
-                }
-            }else if(textoBoton.equals(".")){
-                if(!display.getText().contains(".")){
-                    display.setText(display.getText() + textoBoton);
-                }
-
-            }else if (textoBoton.matches("[+\\-*/]")){
-                valor1 = Double.parseDouble(display.getText());
-                operador = textoBoton;
-                inicio = true;
-            }else if(textoBoton.equals("=")){
-                double valor2 = Double.parseDouble(display.getText());
-                switch (operador){
-                    case "+":
-                        valor1 += valor2;
-                        break;
-                    case "-":
-                        valor1 -= valor2;
-                        break;
-                    case "*":
-                        valor1 *= valor2;
-                        break;
-                    case "/":
-                        if(valor2 != 0){
-                            valor1 /= valor2;
-                        }else{
-                            JOptionPane.showMessageDialog(null, "El numero es infinito, no lo podemos calcular. Piensa");
-                        }
-                        break;
-                    case null, default:
-                        break;
-                }
-                display.setText(String.valueOf(valor1));
-                inicio = true;
+            switch (textoBoton) {
+                case "0":
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                case "5":
+                case "6":
+                case "7":
+                case "8":
+                case "9":
+                    handleNumber(textoBoton);
+                    break;
+                case ".":
+                    handleDecimal(textoBoton);
+                    break;
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                    handleOperator(textoBoton);
+                    break;
+                case "=":
+                    handleEquals();
+                    break;
             }
         }
     }
+
     public static void main(String[] args){
         SwingUtilities.invokeLater( ()-> {
             Calculadora calculadora = new Calculadora();
