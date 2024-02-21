@@ -17,7 +17,7 @@ public class Calculadora extends JFrame {
     public Calculadora(){
         setTitle("Calculadora de Jesus");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300,400);
+        setSize(400,500);
         setLayout(new BorderLayout());
 
         //Terminando de crear objeto y dandole caracteristicas
@@ -40,9 +40,10 @@ public class Calculadora extends JFrame {
 
         //Creacion del panel que tendra los botones
         JPanel panelBotones = new JPanel();
-        panelBotones.setLayout(new GridLayout(4,4,10,10));
+        panelBotones.setLayout(new GridLayout(5,4,10,10));
         panelBotones.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
         String[] botones = {
+                "√","%","C","CE",
                 "7","8","9","/",
                 "4","5","6","*",
                 "1","2","3","-",
@@ -50,7 +51,7 @@ public class Calculadora extends JFrame {
         };
         for(String boton : botones){
             JButton btn = new JButton(boton);
-            btn.setFont(new Font("System-ui", Font.PLAIN,18));
+            btn.setFont(new Font("System-ui", Font.PLAIN,14));
             btn.addActionListener(new BotonClickListener());
             panelBotones.add(btn);
         }
@@ -78,6 +79,7 @@ public class Calculadora extends JFrame {
         inicio = true;
     }
 
+
     private void handleEquals() {
         double valor2 = Double.parseDouble(display.getText());
         switch (operador) {
@@ -97,10 +99,30 @@ public class Calculadora extends JFrame {
                     JOptionPane.showMessageDialog(null, "El número es infinito, no lo podemos calcular. Piensa");
                 }
                 break;
+            case "%":
+                valor1= valor1/100;
+                break;
+            case "√":
+                valor1 = Math.sqrt(valor1);
+                break;
         }
         display.setText(String.valueOf(valor1));
         inicio = true;
     }
+
+    private void handleClear() {
+        display.setText("");
+        valor1 = 0;
+        inicio = true;
+    }
+
+    private void handleDelete(){
+        String currentText = display.getText();
+        if(!currentText.isEmpty()){
+            display.setText(currentText.substring(0, currentText.length()-1));
+        }
+    }
+
 
     private class BotonClickListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
@@ -127,10 +149,18 @@ public class Calculadora extends JFrame {
                 case "-":
                 case "*":
                 case "/":
+                case "%":
+                case "√":
                     handleOperator(textoBoton);
                     break;
                 case "=":
                     handleEquals();
+                    break;
+                case "CE":
+                    handleClear();
+                    break;
+                case "C":
+                    handleDelete();
                     break;
             }
         }
